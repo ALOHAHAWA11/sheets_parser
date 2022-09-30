@@ -103,6 +103,4 @@ class Parser:
 
     @staticmethod
     def serialize_to_json(obj_list):
-        for obj in obj_list:
-            print(json.dumps(obj, cls=TaskEncoder, ensure_ascii=False))
-        print(json.dumps(obj_list))
+        return json.dumps(obj_list, cls=TaskEncoder, ensure_ascii=False)

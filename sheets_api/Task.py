@@ -1,10 +1,10 @@
 class Task:
 
-    def __init__(self, task_name, **kwargs):
+    def __init__(self, task_name):
         self.__task_name = task_name
         self.__time = None
         self.__sub_tasks = []
-        self.attribute = kwargs or None
+
 
     @property
     def sub_tasks(self):

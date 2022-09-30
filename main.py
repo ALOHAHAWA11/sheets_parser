@@ -25,8 +25,7 @@ if __name__ == '__main__':
                     title = str(input())
                     sheet_parser.get_sheet(id, title)
                     tasks = sheet_parser.parse_tasks()
-                    print(tasks)
-                    sheet_parser.serialize_to_json(tasks)
+                    print(sheet_parser.serialize_to_json(tasks))
 
         except ValueError:
             print('Пожалуйста, вводите цифры, а не символы!')
