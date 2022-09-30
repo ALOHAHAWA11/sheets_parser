@@ -24,7 +24,7 @@ if __name__ == '__main__':
                     print('Введите название для получение точной информации:')
                     title = str(input())
                     sheet_parser.get_sheet(id, title)
-
+                    sheet_parser.parse_tasks()
 
         except ValueError:
             print('Пожалуйста, вводите цифры, а не символы!')
