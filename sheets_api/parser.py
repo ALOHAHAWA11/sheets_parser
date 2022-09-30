@@ -4,7 +4,10 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+
+from sheets_api.Encoder import TaskEncoder
 from sheets_api.Task import Task
+import json
 
 
 class Parser:
@@ -96,9 +99,10 @@ class Parser:
                     task.time = row[2]
                     tasks.append(task)
 
-        for task in tasks:
-            print('{0} | {1}'.format(task.task_name, task.time))
-            if task.sub_tasks:
-                for sub_task in task.sub_tasks:
-                    print('             {0} | {1}'.format(sub_task.task_name, sub_task.time))
+        return tasks
 
+    @staticmethod
+    def serialize_to_json(obj_list):
+        for obj in obj_list:
+            print(json.dumps(obj, cls=TaskEncoder, ensure_ascii=False))
+        print(json.dumps(obj_list))

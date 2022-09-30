@@ -24,7 +24,9 @@ if __name__ == '__main__':
                     print('Введите название для получение точной информации:')
                     title = str(input())
                     sheet_parser.get_sheet(id, title)
-                    sheet_parser.parse_tasks()
+                    tasks = sheet_parser.parse_tasks()
+                    print(tasks)
+                    sheet_parser.serialize_to_json(tasks)
 
         except ValueError:
             print('Пожалуйста, вводите цифры, а не символы!')
