@@ -5,9 +5,11 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-from sheets_api.Encoder import TaskEncoder
+from sheets_api.Encoder import TaskEncoder, TaskHeaderEncoder
 from sheets_api.Task import Task
 import json
+
+from sheets_api.TaskHeader import TaskHeader
 
 
 class Parser:
@@ -73,16 +75,19 @@ class Parser:
         is_content = False
         has_sub = False
         sub_tasks = []
+        header = []
         print(selected_sheet)
         for i, row in enumerate(selected_sheet):
             if not is_content:
                 if 'Задача' and 'Подзадача' in row:
                     is_content = True
                     continue
+                elif i == 0:
+                    continue
                 if len(row) != 0:
                     for j in row:
                         if j != '' and j is not None:
-                            tasks.append(j)
+                            header.append(j)
             if has_sub:
                 if not row:
                     has_sub = False
@@ -106,6 +111,13 @@ class Parser:
                     task = Task(row[0])
                     task.time = row[2]
                     tasks.append(task)
+        task_header = TaskHeader()
+        task_header.company = header[0]
+        task_header.target = header[1]
+        header_json = json.dumps(task_header, cls=TaskHeaderEncoder, ensure_ascii=False)
+        tasks_json = json.dumps(tasks, cls=TaskEncoder, ensure_ascii=False)
+        tasks = header_json + tasks_json
+        print(tasks)
         return tasks
 
     @staticmethod
