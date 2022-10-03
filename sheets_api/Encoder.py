@@ -9,6 +9,7 @@ class TaskEncoder(json.JSONEncoder):
             return {
                 "task": obj.task_name,
                 "time": obj.time,
-                "subtasks": obj.sub_tasks
+                "subtasks": obj.sub_tasks,
+                "description": obj.description
             }
         return json.JSONEncoder.default(self, obj)

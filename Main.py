@@ -1,4 +1,4 @@
-from sheets_api.parser import Parser as sheet_parser
+from sheets_api.Parser import Parser as sheet_parser
 
 if __name__ == '__main__':
     is_power_on = True

@@ -4,7 +4,7 @@ class Task:
         self.__task_name = task_name
         self.__time = None
         self.__sub_tasks = []
-
+        self.__description = None
 
     @property
     def sub_tasks(self):
@@ -29,3 +29,11 @@ class Task:
     @time.setter
     def time(self, time):
         self.__time = time
+
+    @property
+    def description(self):
+        return self.__description
+
+    @description.setter
+    def description(self, description):
+        self.__description = description

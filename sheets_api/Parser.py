@@ -73,32 +73,39 @@ class Parser:
         is_content = False
         has_sub = False
         sub_tasks = []
+        print(selected_sheet)
         for i, row in enumerate(selected_sheet):
-            if 'Задача' and 'Подзадача' in row:
-                is_content = True
-                continue
+            if not is_content:
+                if 'Задача' and 'Подзадача' in row:
+                    is_content = True
+                    continue
+                if len(row) != 0:
+                    for j in row:
+                        if j != '' and j is not None:
+                            tasks.append(j)
             if has_sub:
                 if not row:
                     has_sub = False
-                if len(row) == 3:
+                if len(row) >= 3:
                     sub_task = Task(row[1])
                     sub_task.time = row[2]
+                    if len(row) > 3:
+                        sub_task.description = row[4]
                     sub_tasks.append(sub_task)
                 else:
                     index = len(tasks)
                     tasks[index - 1].sub_tasks = sub_tasks
                     sub_tasks = []
             if is_content and row != [] and row[0] != '':
-                if len(row) == 1:
+                if len(row) >= 1:
                     has_sub = True
                     tasks.append(Task(row[0]))
-                elif len(row) == 3:
+                elif len(row) >= 3:
                     has_sub = False
                     sub_tasks = []
                     task = Task(row[0])
                     task.time = row[2]
                     tasks.append(task)
-
         return tasks
 
     @staticmethod
