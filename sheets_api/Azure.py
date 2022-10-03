@@ -1,43 +1,71 @@
 import requests
 from azure.devops.connection import Connection
 from msrest.authentication import BasicAuthentication
-import pprint
+
+personal_access_token = None
 
 
-def send_to_azure():
-    # Fill in with your personal access token and org URL
+def connect_to_azure():
+    global personal_access_token
     personal_access_token = '544t3yeqmfshd7klnnmisoau3g5cewtncrhpvgmpnoef7atzwpvq'
     organization_url = 'https://dev.azure.com/nikitau'
-
-    # Create a connection to the org
     credentials = BasicAuthentication('', personal_access_token)
-    connection = Connection(base_url=organization_url, creds=credentials)
+    Connection(base_url=organization_url, creds=credentials)
 
-    # Get a client (the "core" client provides access to projects, teams, etc)
-    # core_client = connection.clients.get_core_client()
 
-    # Get the first page of projects
-    # get_projects_response = core_client.get_projects()
-    # index = 0
-    # while get_projects_response is not None:
-    #     for project in get_projects_response.value:
-    #         pprint.pprint("[" + str(index) + "] " + project.name)
-    #         index += 1
-    #     if get_projects_response.continuation_token is not None and get_projects_response.continuation_token != "":
-    #         # Get the next page of projects
-    #         get_projects_response = core_client.get_projects(
-    #             continuation_token=get_projects_response.continuation_token)
-    #     else:
-    #         # All projects have been retrieved
-    #         get_projects_response = None
+def create_issue(header, url='https://dev.azure.com/nikitau/destination/_apis/wit/workitems/$Issue?api-version=6.0'):
     data = [
         {
             "op": "add",
             "path": "/fields/System.Title",
-            "value": "Sample task"
-        }
+            "value": header.company,
+        },
     ]
-    url = 'https://dev.azure.com/nikitau/destination/_apis/wit/workitems/$Task?api-version=6.0'
-    print(requests.post(url, json=data, headers={'Content-Type': 'application/json-patch+json'},
-                        auth=('', personal_access_token)).json())
+    req = requests.post(url, json=data, headers={'Content-Type': 'application/json-patch+json'},
+                         auth=('', personal_access_token)).json()
+    issue_id = req['id']
+    return issue_id
 
+
+def create_task(tasks, url='https://dev.azure.com/nikitau/destination/_apis/wit/workitems/$Task?api-version=6.0'):
+    data = [
+        {
+            "op": "add",
+            "path": "/fields/System.Title",
+            "value": tasks[0].task_name,
+        },
+    ]
+    req = requests.post(url, json=data, headers={'Content-Type': 'application/json-patch+json'},
+                         auth=('', personal_access_token)).json()
+    task_id = req['id']
+    print(task_id)
+    return task_id
+
+
+def bound_tasks_and_issue(issue_id, task_id):
+    url ='https://dev.azure.com/nikitau/destination/_apis/wit/workitems/{0}?api-version=6.1-preview.3'.format(task_id)
+    data = [
+        {
+            "op": "add",
+            "path": "/relations/-",
+            "value": {
+                "rel": "System.LinkTypes.Hierarchy-Reverse",
+                "url": "https://dev.azure.com/nikitau/destination/_apis/wit/workItems/{0}".format(issue_id),
+                "attributes": {
+                    "isLocked": False,
+                    "name": "Parent",
+
+                }
+            },
+        }
+
+    ]
+    return requests.patch(url, json=data, headers={'Content-Type': 'application/json-patch+json'},
+                          auth=('', personal_access_token)).json()
+
+
+def send_to_azure(header, tasks):
+    connect_to_azure()
+    issue_id = create_issue(header)
+    task_id = create_task(tasks)
+    print(bound_tasks_and_issue(issue_id, task_id))

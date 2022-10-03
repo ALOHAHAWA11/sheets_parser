@@ -59,13 +59,13 @@ class Parser:
             if not result:
                 print('No data found.')
 
-            for row in values:
-                print()
-                print('-' * 100)
-                for cell in row:
-                    print("{:<25}|".format(cell), end=" ")
-            print()
-            print('-' * 100)
+            # for row in values:
+            #     print()
+            #     print('-' * 100)
+            #     for cell in row:
+            #         print("{:<25}|".format(cell), end=" ")
+            # print()
+            # print('-' * 100)
         except HttpError as err:
             print(err)
 
@@ -76,7 +76,6 @@ class Parser:
         has_sub = False
         sub_tasks = []
         header = []
-        print(selected_sheet)
         for i, row in enumerate(selected_sheet):
             if not is_content:
                 if 'Задача' and 'Подзадача' in row:
@@ -116,10 +115,7 @@ class Parser:
         task_header.target = header[1]
         header_json = json.dumps(task_header, cls=TaskHeaderEncoder, ensure_ascii=False)
         tasks_json = json.dumps(tasks, cls=TaskEncoder, ensure_ascii=False)
-        tasks = header_json + tasks_json
-        print(tasks)
-        return tasks
 
-    @staticmethod
-    def serialize_to_json(obj_list):
-        return json.dumps(obj_list, cls=TaskEncoder, ensure_ascii=False)
+        return task_header, tasks
+
+
