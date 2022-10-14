@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sheets_api import Azure
 from sheets_api.Parser import Parser as sheet_parser
 
@@ -27,8 +29,13 @@ if __name__ == '__main__':
 #                 sheet_parser.get_sheet(id, title)
 #                 tasks = sheet_parser.parse_tasks()
         sheet_parser.set_connection()
-        tasks = sheet_parser.get_sheet('1ut1btxmaFrZdNKMvB3GEKpXSNNWWvZYh0u7UDnNn48E', 'Оценка')
+        sheets = sheet_parser.get_sheets('123vidGX_XEBsNbUy_1dgFsXhUX12qgPr4b0wUgU0c20')
+        tasks = sheet_parser.get_sheet('123vidGX_XEBsNbUy_1dgFsXhUX12qgPr4b0wUgU0c20', 'Оценка')
+        start = datetime.now()
         header, tasks = sheet_parser.parse_tasks()
+        print('Парсинг: ', datetime.now() - start)
+        start = datetime.now()
         Azure.send_to_azure(header, tasks)
+        print('Отправка в Azure: ', datetime.now() - start)
     except ValueError:
             print('Пожалуйста, вводите цифры, а не символы!')

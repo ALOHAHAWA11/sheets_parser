@@ -13,8 +13,8 @@ from sheets_api.TaskHeader import TaskHeader
 
 
 class Parser:
-    _creds = None
-    _selected_sheet = None
+    creds = None
+    selected_sheet = None
 
     @staticmethod
     def set_connection():
@@ -59,13 +59,13 @@ class Parser:
             if not result:
                 print('No data found.')
 
-            # for row in values:
-            #     print()
-            #     print('-' * 100)
-            #     for cell in row:
-            #         print("{:<25}|".format(cell), end=" ")
-            # print()
-            # print('-' * 100)
+            for row in values:
+                print()
+                print('-' * 300)
+                for cell in row:
+                    print("{:<15}|".format(cell), end=" ")
+            print()
+            print('-' * 300)
         except HttpError as err:
             print(err)
 
@@ -77,6 +77,8 @@ class Parser:
         sub_tasks = []
         header = []
         for i, row in enumerate(selected_sheet):
+            if 'Правка ошибок' in row:
+                break
             if not is_content:
                 if 'Задача' and 'Подзадача' in row:
                     is_content = True
@@ -113,9 +115,6 @@ class Parser:
         task_header = TaskHeader()
         task_header.company = header[0]
         task_header.target = header[1]
-        header_json = json.dumps(task_header, cls=TaskHeaderEncoder, ensure_ascii=False)
-        tasks_json = json.dumps(tasks, cls=TaskEncoder, ensure_ascii=False)
-
         return task_header, tasks
 
 
